@@ -7,6 +7,7 @@ import Relic from '../components/Relic.vue';
 import { GetReport } from '../utils/api';
 import { Report } from '../utils/report';
 import { ArrowRight, Clock, Timer } from '@element-plus/icons-vue';
+import ingotspng from '../assets/ingots.png';
 enum NodeType {
     '作战',
     '紧急作战',
@@ -185,7 +186,7 @@ GetReport(id as string).then(res => {
                             <div v-if="node.type == 4">
                                 购买:
                                 <div v-for="buy in node.shop.buys">
-                                    <img src="/image/item/图标_源石锭.png" />
+                                    <img :src="ingotspng" />
                                     {{ buy.cost }}
                                     <Relic :name="buy.collection"></Relic>
                                 </div>
