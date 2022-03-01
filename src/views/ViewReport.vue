@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 import dayjs from 'dayjs';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import Operater from '../components/Operater.vue';
 import Relic from '../components/Relic.vue';
 import { GetReport } from '../utils/api';
 import { Report } from '../utils/report';
 import { ArrowRight, Clock, Timer } from '@element-plus/icons-vue';
+import { GetStaticUrl } from '../utils/static';
 import ingotspng from '../assets/ingots.png';
 enum NodeType {
     '作战',
@@ -139,9 +140,13 @@ GetReport(id as string).then(res => {
                             <template #header>
                                 <div>
                                     <img
-                                        :src="`/image/node/${
-                                            NodeIconType[node.type - 1]
-                                        }.png`"
+                                        :src="
+                                            GetStaticUrl(
+                                                `/image/node/${
+                                                    NodeIconType[node.type - 1]
+                                                }.png`
+                                            )
+                                        "
                                         :title="NodeIconType[node.type - 1]"
                                         style="background-color: black"
                                     />
