@@ -161,7 +161,7 @@ GetReport(id as string).then(res => {
                                 获得剧目:{{ node.capsules.join(' ') }}
                             </div>
                             <div v-if="node.collections.length">
-                                获得遗物:
+                                获得收藏品:
                                 <Relic
                                     v-for="collection in node.collections"
                                     :name="collection"
