@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { GetStaticUrl } from '../utils/static';
 const props = defineProps({
     name: String,
     half: Boolean,
@@ -7,10 +8,13 @@ const props = defineProps({
 });
 const width = props.width ?? '180px';
 const height = props.width ?? '180px';
+const imageUrl = GetStaticUrl(
+    `/image/${props.half ? 'half' : 'icon'}${props.upgraded ? '2' : ''}/头像_${
+        props.name
+    }${props.upgraded ? '_2' : ''}.png`
+);
 const styleObject = {
-    backgroundImage: `url(/image/${props.half ? 'half' : 'icon'}${
-        props.upgraded ? '2' : ''
-    }/头像_${props.name}${props.upgraded ? '_2' : ''}.png)`,
+    backgroundImage: `url(${imageUrl})`,
     backgroundSize: '100% 100%',
     width: width,
     height: height

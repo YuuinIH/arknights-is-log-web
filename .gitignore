@@ -4,7 +4,7 @@ node_modules
 dist
 dist-ssr
 *.local
-public/*.json
+public/gamedata/*.json
 public/image/
 public/getreport/*.json
 scripts/

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
+import { GetStaticUrl } from './static';
 
 export type Report = {
     id?: string;
@@ -40,13 +41,40 @@ type Node = {
     recruits: Array<string>;
     upgrades: Array<string>;
     shop: {
-        buys: Array<buyitem>;
+        buys: Array<BuyItem>;
         invest: number;
     };
 };
-type buyitem = {
+type BuyItem = {
     collection: string;
     cost: number;
+};
+type CharData = {
+    [key: string]: {
+        name: string;
+        profession: string;
+        subProfessionId: string;
+        rarity: number;
+    };
+};
+type RelicData = {
+    [key: string]: {
+        id: string;
+        name: string;
+        description: string;
+        usage: string;
+        rarity: string;
+        value: number;
+        unlock: null | string;
+    };
+};
+type BandData = {
+    [key: string]: {
+        name: string;
+        upgrade: Array<string>;
+        usage: string;
+        unlock: string;
+    };
 };
 const enum PROFESSION {
     SNIPER = 'SNIPER',
@@ -59,34 +87,38 @@ const enum PROFESSION {
     SUPPORT = 'SUPPORT'
 }
 
-const charRes = await axios.get('/character.json').then(res => {
-    return new Object(res.data);
+const charDataUrl = GetStaticUrl('/gamedata/character.json');
+const relicDataUrl = GetStaticUrl('/gamedata/relic.json');
+const BandDataUrl = GetStaticUrl('/gamedata/band.json');
+
+let charData: CharData = {};
+axios.get(charDataUrl).then(res => {
+    charData = res.data;
 });
-const relicRes = await axios.get('/relic.json').then(res => {
-    return new Object(res.data);
+
+let relicData: RelicData = {};
+axios.get(relicDataUrl).then(res => {
+    relicData = res.data;
 });
-const bandMap: Map<string, string[]> = await axios
-    .get('/band.json')
-    .then(res => {
-        const bands = new Object(res.data);
-        const bandMap = new Map<string, string[]>();
-        for (let band of Object.values(bands)) {
-            bandMap.set(band['name'], band['upgrade']);
-        }
-        return bandMap;
-    });
+
+let bandMap = new Map<string, string[]>();
+axios.get(BandDataUrl).then(res => {
+    const bands: BandData = res.data;
+    for (let band of Object.values(bands)) {
+        bandMap.set(band['name'], band['upgrade']);
+    }
+});
 
 const GetCharacterPro = function (name: string): string {
-    return Object.values(charRes).find((i: any) => i.name == name).profession;
+    return Object.values(charData).find(i => i.name == name)?.profession ?? '';
 };
 const GetCharacterRare = function (name: string): number {
-    return Object.values(charRes).find((i: any) => i.name == name).rarity;
+    return Object.values(charData).find(i => i.name == name)?.rarity ?? 0;
 };
 //TODO:在考虑是否将关卡名转换成关卡的对应代码
 const Stageid = function (data: string): string {
     return data;
 };
-//TODO:通过判断环境使用构建文件大小更小的方法
 const GetTextFromXML = function (text: string, index = 0): string {
     const parser = new XMLParser();
     const xmlstring = `<a>${text}</a>`;
@@ -107,7 +139,7 @@ const GetTextListFromXML = function (text: string): string[] {
         : [jObj.a.b];
 };
 
-const Converter2 = function <T>(response: T) {
+const Converter = function <T>(response: T) {
     const reports: Report[] = [];
     let d: any;
     if (typeof response == 'string') {
@@ -228,7 +260,7 @@ const Converter2 = function <T>(response: T) {
                             shop: {
                                 buys: node.shop
                                     ? node.shop.buys.reduce(
-                                          (a: buyitem[], c: any) => {
+                                          (a: BuyItem[], c: any) => {
                                               reportTemplate.collections.push(
                                                   GetTextFromXML(c, 1)
                                               );
@@ -281,4 +313,4 @@ const Converter2 = function <T>(response: T) {
     return reports;
 };
 
-export default Converter2;
+export default Converter;

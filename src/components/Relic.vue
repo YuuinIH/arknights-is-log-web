@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { inject } from 'vue';
+import { GetStaticUrl } from '../utils/static';
 const props = defineProps({
     name: String,
     width: Number
@@ -7,12 +8,12 @@ const props = defineProps({
 const name = props.name ?? '';
 const width = props.width ?? 64;
 const relicsmapid = inject('relicsmapid') as Map<String, Number>;
-const relics = inject('relics');
 const relicid = relicsmapid.get(name);
+const imageUrl = GetStaticUrl(
+    `/image/relic/收藏品_傀影与猩红孤钻_${String(relicid).padStart(3, '0')}.png`
+);
 const styleObject = {
-    backgroundImage: `url(/image/relic/收藏品_傀影与猩红孤钻_${String(
-        relicid
-    ).padStart(3, '0')}.png)`,
+    backgroundImage: `url(${imageUrl})`,
     width: `${width}px`,
     height: `${width}px`
 };

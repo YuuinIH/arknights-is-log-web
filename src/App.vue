@@ -4,6 +4,7 @@ import HeaderVue from './components/Header.vue';
 import { validate as uuidValidate } from 'uuid';
 import axios from 'axios';
 import { GetNewUUID, Login } from './utils/auth';
+import { GetStaticUrl } from './utils/static';
 const uuid = ref('');
 const themeList = [
     {
@@ -41,10 +42,12 @@ const updateThemeID = (value: string) => {
     console.log(themeid.value);
 };
 
+const relicDataUrl = GetStaticUrl('/gamedata/relic.json');
+
 let relics: any = {};
 let relicsmapid = new Map<String, Number>();
 let relicsmap = new Map<Number, String>();
-axios.get('/relic.json').then(res => {
+axios.get(relicDataUrl).then(res => {
     relics = res.data;
     for (let i in relics) {
         relicsmapid.set(relics[i].name, relics[i].id);

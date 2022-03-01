@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { Upload, Files } from '@element-plus/icons-vue';
-import _ from 'lodash';
-import Converter from '../utils/report';
 import ReportCard from '../components/ReportCard.vue';
 import { PostReports } from '../utils/api';
 import { ElMessage } from 'element-plus';
 
+let Converter: any;
+onMounted(() => {
+    import('../utils/report').then(module => {
+        Converter = module.default;
+    });
+});
 const input = ref('');
 const handleFiles = async (e: Event) => {
     let files = (e.target as HTMLInputElement).files ?? [];
